@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+
+from pathlib import Path
+import scrapy
+import requests
+import urllib
+import sys
+sys.path.append('/usr/share')
+import lib
+import os
+import shutil
+import tarfile
+import urllib
+
+# Check if lklocation exists, if it doesn't and the program
+# is running as root, create it. If the program is NOT
+# running as root, inform the user and exit.
+def check_for_lklocation():
+	if not os.path.isfile(lib.settings['lklocation']):
+		if lib.is_admin():
+			lib.create_lklocation()
+		else:
+			print("You're missing the file which " \
+				  "tracks what is the latest " \
+				  "kernel you downloaded.")
+			print("To fix that, run the script as " \
+				  "root.")
+			exit()
+
+# Return the link to the latest kernel and the version
+# (both are returned as strings)
+def get_link_and_version():
+	response = requests.get('https://www.kernel.org')
+	response = scrapy.http.TextResponse(body=response.content, url='https://www.kernel.org')
+	return response.css('td[id="latest_link"] a::attr(href)').extract_first(), \
+	response.css('td[id="latest_link"] a::text').extract_first()
+
+def check_if_the_latest_is_installed():
+	if version == latest_acknowledged:
+		print('You have the latest stable kernel downloaded:', version)
+		exit()
+	else:
+		print('New kernel available:', version, end='')
+		if latest_acknowledged != '':
+			print(', you have {}'.format(latest_acknowledged))
+
+# Clean lkfoldername
+def clean_old_kernels():
+	shutil.rmtree(lib.settings['lkfoldername'])
+	os.makedirs(  lib.settings['lkfoldername'])
+
+# Extract the kernel
+def unpack_kernel():
+	print("Unpacking the kernel.")
+	name = 'linux-' + version + '.tar.xz'
+	try:
+		tar = tarfile.open(name=name, mode='r')
+	except tarfile.ReadError:
+		print("Cannot open the archive.")
+		exit()
+	tar.extractall()
+	os.remove(name)
+
+os.chdir(str(Path.home()))
+
+check_for_lklocation()
+
+link, version = get_link_and_version()
+
+latest_acknowledged = open(lib.settings['lklocation'], 'r').read().replace('\n', '')
+
+check_if_the_latest_is_installed()
+
+if not lib.is_admin():
+	print("If you wish to download the latest kernel, run the script as an admin.")
+	exit()
+
+file = open(lib.settings['lklocation'], 'w')
+file.write(version)
+
+if not os.path.isdir(lib.settings['lkfoldername']):
+	os.makedirs(lib.settings['lkfoldername'])
+
+if lib.settings['cleanoldkernels'] == 'true':
+	clean_old_kernels()
+
+# Riordinare la merda qua sotto 
+
+os.chdir(lib.settings['lkfoldername'])
+
+urllib.request.urlretrieve(link, 'linux-' + version + '.tar.xz')
+
+if lib.settings['unpack_kernel'] == 'true':
+	unpack_kernel()
