@@ -86,8 +86,6 @@ if not os.path.isdir(lib.settings['lkfoldername']):
 if lib.settings['cleanoldkernels'] == 'true':
 	clean_old_kernels()
 
-# Riordinare la merda qua sotto 
-
 os.chdir(lib.settings['lkfoldername'])
 
 urllib.request.urlretrieve(link, 'linux-' + version + '.tar.xz')
