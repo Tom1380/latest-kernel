@@ -16,7 +16,7 @@ import urllib
 # is running as root, create it. If the program is NOT
 # running as root, inform the user and exit.
 def check_for_lklocation():
-	if not os.path.isfile(lib.settings['lklocation']):
+	if not os.path.isfile(lib.config['lklocation']):
 		if lib.is_admin():
 			lib.create_lklocation()
 		else:
@@ -48,8 +48,8 @@ def check_if_the_latest_is_installed():
 
 # Clean lkfoldername
 def clean_old_kernels():
-	shutil.rmtree(lib.settings['lkfoldername'])
-	os.makedirs(  lib.settings['lkfoldername'])
+	shutil.rmtree(lib.config['lkfoldername'])
+	os.makedirs(  lib.config['lkfoldername'])
 
 # Extract the kernel
 def unpack_kernel():
@@ -69,7 +69,7 @@ check_for_lklocation()
 
 link, version = get_link_and_version()
 
-latest_acknowledged = open(lib.settings['lklocation'], 'r').read().replace('\n', '')
+latest_acknowledged = open(lib.config['lklocation'], 'r').read().replace('\n', '')
 
 check_if_the_latest_is_installed()
 
@@ -77,18 +77,18 @@ if not lib.is_admin():
 	print("If you wish to download the latest kernel, run the script as an admin.")
 	exit()
 
-file = open(lib.settings['lklocation'], 'w')
+file = open(lib.config['lklocation'], 'w')
 file.write(version)
 
-if not os.path.isdir(lib.settings['lkfoldername']):
-	os.makedirs(lib.settings['lkfoldername'])
+if not os.path.isdir(lib.config['lkfoldername']):
+	os.makedirs(lib.config['lkfoldername'])
 
-if lib.settings['cleanoldkernels'] == 'true':
+if lib.config['cleanoldkernels'] == 'true':
 	clean_old_kernels()
 
-os.chdir(lib.settings['lkfoldername'])
+os.chdir(lib.config['lkfoldername'])
 
 urllib.request.urlretrieve(link, 'linux-' + version + '.tar.xz')
 
-if lib.settings['unpack_kernel'] == 'true':
+if lib.config['unpack_kernel'] == 'true':
 	unpack_kernel()

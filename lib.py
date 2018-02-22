@@ -5,7 +5,7 @@ import json
 import re
 
 # Return a json which will be used as a dict that contains all the settings
-def read_settings():
+def read_config():
 	try:
 		config_file = open(str(Path.home()) + '/.lk', 'r')
 	except FileNotFoundError:
@@ -19,8 +19,8 @@ def read_settings():
 
 # Create the file which is used to track the latest kernel downloaded
 def create_lklocation():
-	global settings
-	open(settings['lklocation'], 'w')
+	global config
+	open(config['lklocation'], 'w')
 
 
 # Return true if the program is running as admin
@@ -33,4 +33,3 @@ def is_admin():
 
 # The dict which contains all the settings
 config = read_config()
-print(config)
