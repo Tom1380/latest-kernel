@@ -1,27 +1,21 @@
 from pathlib import Path
 import os
 import ctypes
+import json
+import re
 
-# Return a dict which contains all the settings
+# Return a json which will be used as a dict that contains all the settings
 def read_settings():
-	settings = {}
-
 	try:
-		file = open(str(Path.home()) + '/.lk', 'r')
+		config_file = open(str(Path.home()) + '/.lk', 'r')
 	except FileNotFoundError:
 		print("You haven't got a configuration file. Try reinstalling.")
 		exit()
-	for iterator, line in enumerate(file):
-		line = line.split('#')[0].strip()
-		if len(line) == 0:
-			continue
-		line = ''.join(line).replace(' ', '').split('=')
-		try:
-			settings[line[0]] = line[1]
-		except IndexError:
-			print("Check line", iterator, "of ~/.lk")
-			
-	return settings
+	config_str = config_file.read()
+	config_str = re.sub(r'\\\n', '', config_str)
+	config_str = re.sub(r'//.*\n', '\n', config_str)
+
+	return json.loads(config_str)
 
 # Create the file which is used to track the latest kernel downloaded
 def create_lklocation():
@@ -38,4 +32,5 @@ def is_admin():
 	return is_admin
 
 # The dict which contains all the settings
-settings = read_settings()
+config = read_config()
+print(config)

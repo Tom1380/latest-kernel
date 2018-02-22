@@ -1,17 +1,17 @@
-#!/usr/bin/env bash
+{
+	// Edit the value of lklocation down below if you wish to rename and/or move the config file, the new value has to be the path to the config file.
 
-# Edit the value of lklocation down below if you wish to rename and/or move the config file, the new value has to be the path to the config file.
+	"lklocation": "/etc/latest_kernel",
 
-lklocation = /etc/latest_kernel
+	// Edit the value of lkfoldername down below if you wish to change the folder in which the kernel's source is stored, the new value has to be the path to the folder (full path).
 
-# Edit the value of lkfoldername down below if you wish to change the folder in which the kernel's source is stored, the new value has to be the path to the folder (full path).
+	"lkfoldername": "/home/tommy/linux-stable",
 
-lkfoldername = /home/tommy/linux-stable
+	// Change the value of cleanoldkernels to true down below to remove all old kernels from the directory
 
-# Change the value of cleanoldkernels to true down below to remove all old kernels from the directory
+	"cleanoldkernels": true,
 
-cleanoldkernels = true
+	// Change the value of unpack_kernel to true if you want your kernels to automatically be unpacked
 
-# Change the value of unpack_kernel to true if you want your kernels to automatically be unpacked
-
-unpack_kernel = false
+	"unpack_kernel": false
+}
